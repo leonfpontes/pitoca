@@ -19,9 +19,28 @@ function generateDoses(med, startISO) {
   const start = new Date(startISO);
   const totalDays = med.totalDays || 60;
   const endMs = start.getTime() + totalDays * 24 * 60 * 60 * 1000;
-  const intervalMs = med.intervalHours * 60 * 60 * 1000;
 
   const doses = [];
+
+  if (med.fixedTimes && med.fixedTimes.length > 0) {
+    // Generate doses at specific fixed times of day for each day of treatment
+    const startDay = new Date(start);
+    startDay.setHours(0, 0, 0, 0);
+    for (let dayOffset = 0; dayOffset < totalDays; dayOffset++) {
+      for (const timeStr of med.fixedTimes) {
+        const [h, m] = timeStr.split(':').map(Number);
+        const d = new Date(startDay.getTime() + dayOffset * 24 * 60 * 60 * 1000);
+        d.setHours(h, m, 0, 0);
+        if (d >= start && d.getTime() < endMs) {
+          doses.push(d.toISOString());
+        }
+      }
+    }
+    doses.sort();
+    return doses;
+  }
+
+  const intervalMs = med.intervalHours * 60 * 60 * 1000;
   let t = new Date(start);
 
   while (t.getTime() < endMs) {

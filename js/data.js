@@ -103,9 +103,9 @@ const MEDICATIONS = [
     id: 'gabapentina',
     name: 'Gabapentina',
     dosage: '25 mg',
-    intervalHours: 12,
+    fixedTimes: ['13:00', '00:00'],
     totalDays: 60,       // "até novas recomendações" — gerando 60 dias
-    startISO: '2026-05-13T07:00:00',
+    startISO: '2026-05-13T13:00:00',
     route: 'sonda',
     color: '#c084fc',
     observations: ['Uso oral para manipulação — líquido via sonda', 'Até novas recomendações da veterinária'],

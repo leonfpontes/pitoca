@@ -1,0 +1,358 @@
+/* timeline.css — Grouped day timeline */
+
+/* ── Timeline wrapper ────────────────────────────────────── */
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.timeline-empty {
+  text-align: center;
+  color: var(--color-text-dim);
+  font-size: 0.9rem;
+  padding: var(--sp-10);
+}
+
+/* ── Time slot group ─────────────────────────────────────── */
+.time-slot {
+  display: flex;
+  gap: var(--sp-3);
+  position: relative;
+}
+
+/* Vertical connector line between slots */
+.time-slot::before {
+  content: '';
+  position: absolute;
+  left: 31px;
+  top: 52px;
+  bottom: -12px;
+  width: 2px;
+  background: var(--color-border);
+  z-index: 0;
+}
+
+.time-slot:last-child::before { display: none; }
+
+/* ── Time column ─────────────────────────────────────────── */
+.slot-time-col {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 64px;
+  padding-top: var(--sp-3);
+}
+
+.slot-time-bubble {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--color-text);
+  background: var(--color-surface-2);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 6px 8px;
+  line-height: 1;
+  text-align: center;
+  letter-spacing: 0.02em;
+  z-index: 1;
+  position: relative;
+  min-width: 60px;
+  transition: border-color var(--transition-fast), color var(--transition-fast);
+}
+
+/* Status colours on the time bubble */
+.time-slot.has-overdue  .slot-time-bubble {
+  border-color: var(--color-overdue-border);
+  color: var(--color-overdue-text);
+  background: var(--color-overdue-bg);
+  box-shadow: var(--shadow-glow-red);
+}
+
+.time-slot.has-imminent .slot-time-bubble {
+  border-color: var(--color-primary);
+  color: var(--color-primary-light);
+  background: var(--color-primary-subtle);
+  box-shadow: var(--shadow-glow-primary);
+  animation: pulse-bubble 2.2s ease-in-out infinite;
+}
+
+.time-slot.all-done .slot-time-bubble {
+  border-color: var(--color-done-border);
+  color: var(--color-done-text);
+  background: var(--color-done-bg);
+  opacity: 0.7;
+}
+
+/* ── Slot content ────────────────────────────────────────── */
+.slot-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+/* ── Feeding row inside a slot ───────────────────────────── */
+.feeding-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--color-feeding-bg);
+  border: 1px solid var(--color-feeding-border);
+  border-radius: var(--radius-sm);
+}
+
+.feeding-row.feeding-past {
+  opacity: 0.4;
+}
+
+.feeding-row-icon { font-size: 1rem; flex-shrink: 0; }
+
+.feeding-row-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-feeding-text);
+}
+
+.feeding-row-note {
+  font-size: 0.72rem;
+  color: var(--color-text-dim);
+  margin-left: auto;
+}
+
+/* ── Individual dose row ─────────────────────────────────── */
+.dose-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-3) var(--sp-3) var(--sp-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--med-color, var(--color-border));
+  transition: background var(--transition-fast), border-color var(--transition-fast), opacity var(--transition-base);
+  min-height: 60px;
+}
+
+.dose-row.status-overdue {
+  background: var(--color-overdue-bg);
+  border-color: var(--color-overdue-border);
+  border-left-color: var(--color-overdue-border);
+}
+
+.dose-row.status-imminent {
+  background: var(--color-imminent-bg);
+  border-color: var(--color-imminent-border);
+  border-left-color: var(--color-imminent-border);
+}
+
+.dose-row.status-done {
+  background: var(--color-done-bg);
+  border-color: var(--color-done-border);
+  border-left-color: var(--color-done-border);
+  opacity: 0.65;
+}
+
+/* ── Dose colour dot ─────────────────────────────────────── */
+.dose-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--med-color, var(--color-text-dim));
+  box-shadow: 0 0 6px var(--med-color, transparent);
+}
+
+.dose-row.status-done .dose-dot { opacity: 0.4; }
+
+/* ── Dose info ───────────────────────────────────────────── */
+.dose-info { flex: 1; min-width: 0; }
+
+.dose-name {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+
+.status-done .dose-name { color: var(--color-text-muted); }
+
+.dose-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 4px;
+}
+
+.dose-relative {
+  font-size: 0.7rem;
+  color: var(--color-text-dim);
+}
+
+.status-overdue  .dose-relative { color: var(--color-overdue-text); }
+.status-imminent .dose-relative { color: var(--color-primary-light); font-weight: 600; }
+.status-done     .dose-relative { color: var(--color-done-text); }
+
+/* observations toggle */
+.obs-toggle {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: 0.8rem;
+  line-height: 1;
+  opacity: 0.6;
+  transition: opacity var(--transition-fast);
+}
+.obs-toggle:hover { opacity: 1; }
+
+.obs-text {
+  margin-top: var(--sp-2);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.obs-text span {
+  font-size: 0.74rem;
+  color: var(--color-text-muted);
+  padding-left: var(--sp-1);
+  line-height: 1.4;
+  border-left: 2px solid var(--med-color, var(--color-border));
+  padding-left: 8px;
+}
+
+.obs-text.hidden { display: none; }
+
+/* ── Give button ─────────────────────────────────────────── */
+.btn-dose {
+  flex-shrink: 0;
+  padding: 0 var(--sp-4);
+  height: 42px;
+  border-radius: var(--radius-md);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  transition: background var(--transition-fast), transform var(--transition-fast), opacity var(--transition-fast);
+  white-space: nowrap;
+  border: none;
+  cursor: pointer;
+  min-width: 68px;
+}
+
+.btn-dose:active { transform: scale(0.95); }
+
+.btn-give {
+  background: var(--color-primary);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(147,51,234,0.4);
+}
+.btn-give:hover { background: var(--color-primary-light); }
+
+.status-overdue .btn-give {
+  background: var(--color-overdue-border);
+  box-shadow: 0 2px 8px var(--color-overdue-glow);
+}
+.status-overdue .btn-give:hover { background: #ef4444; }
+
+.btn-done {
+  background: var(--color-done-bg);
+  color: var(--color-done-text);
+  border: 1px solid var(--color-done-border) !important;
+  font-size: 0.78rem;
+}
+.btn-done:hover { opacity: 0.7; }
+
+/* ── Pulse animation ─────────────────────────────────────── */
+@keyframes pulse-bubble {
+  0%, 100% { box-shadow: 0 0 0 0 var(--color-primary-glow); }
+  50%       { box-shadow: 0 0 0 6px transparent; }
+}
+
+/* ── Date nav ────────────────────────────────────────────── */
+.date-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-4);
+}
+
+.date-nav-label {
+  flex: 1;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.date-nav-btn {
+  padding: var(--sp-2) var(--sp-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.date-nav-btn:hover {
+  background: var(--color-surface-2);
+  border-color: var(--color-primary);
+  color: var(--color-text);
+}
+
+.date-nav-btn.today-btn {
+  border-color: var(--color-primary);
+  color: var(--color-primary-light);
+  background: var(--color-primary-subtle);
+}
+
+/* ── Progress bar (day summary) ──────────────────────────── */
+.day-progress {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--sp-4);
+}
+
+.day-progress-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--color-surface-3);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.day-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-primary-light));
+  border-radius: var(--radius-full);
+  transition: width var(--transition-slow);
+}
+
+.day-progress-label {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.day-progress-label .done-count {
+  color: var(--color-primary-light);
+  font-size: 0.9rem;
+}

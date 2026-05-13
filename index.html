@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Pitoca 🐱 — Remédios</title>
+
+  <!-- Favicon: simple black cat SVG -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐱</text></svg>" />
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/reset.css" />
+  <link rel="stylesheet" href="css/variables.css" />
+  <link rel="stylesheet" href="css/layout.css" />
+  <link rel="stylesheet" href="css/banner.css" />
+  <link rel="stylesheet" href="css/timeline.css" />
+  <link rel="stylesheet" href="css/cards.css" />
+  <link rel="stylesheet" href="css/modal.css" />
+  <link rel="stylesheet" href="css/mobile.css" />
+</head>
+<body>
+
+  <!-- ── Header ──────────────────────────────────────────── -->
+  <header class="site-header" role="banner">
+    <div class="header-cat-icon" aria-hidden="true">🐈‍⬛</div>
+    <div class="header-info">
+      <h1>Pitoca <span class="accent">Remédios</span></h1>
+      <p class="header-datetime" id="current-datetime" aria-live="polite"></p>
+    </div>
+  </header>
+
+  <!-- ── Main ────────────────────────────────────────────── -->
+  <main role="main">
+
+    <!-- Care & Alerts Banner -->
+    <section aria-label="Cuidados e alertas" id="banner-container">
+      <!-- Rendered by app.js → renderBannerRegion() -->
+    </section>
+
+    <!-- Day Timeline -->
+    <section aria-label="Cronograma do dia">
+      <p class="section-heading">Cronograma do dia</p>
+      <div id="timeline-container">
+        <!-- Rendered by app.js → refresh() -->
+      </div>
+    </section>
+
+    <!-- Medications Overview -->
+    <section aria-label="Todos os remédios">
+      <button class="section-toggle"
+              id="cards-toggle"
+              aria-expanded="false"
+              aria-controls="cards-content">
+        Todos os Remédios
+        <span class="toggle-icon" aria-hidden="true">▼</span>
+      </button>
+      <div class="collapsible-content hidden" id="cards-content">
+        <!-- Rendered by app.js → refresh() when expanded -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ── Easter egg: Pitoca animada ────────────────────────── -->
+  <div class="cat-widget" id="cat-widget" role="button" tabindex="0"
+       aria-label="Pitoca! Clique para curar">
+    <span class="cat-body" aria-hidden="true">🐈‍⬛</span>
+    <span class="cat-tooltip">Pitoca 🐾 Clique!</span>
+  </div>
+
+  <!-- ── Start-time Modal ─────────────────────────────────── -->
+  <div id="modal-overlay"
+       class="modal-overlay hidden"
+       role="dialog"
+       aria-modal="true"
+       aria-labelledby="modal-title">
+    <div class="modal">
+      <h3 id="modal-title">Definir horário de início</h3>
+      <p class="modal-med-name" id="modal-med-name"></p>
+
+      <label class="modal-input-label" id="modal-input-label" for="modal-datetime-input">
+        Data e hora da primeira dose
+      </label>
+      <input type="datetime-local"
+             id="modal-datetime-input"
+             class="modal-datetime-input"
+             aria-required="true" />
+
+      <div class="modal-actions">
+        <button class="btn-modal-cancel" id="modal-cancel">Cancelar</button>
+        <button class="btn-modal-confirm" id="modal-confirm">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── JavaScript (load order matters) ─────────────────── -->
+  <script src="js/data.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/scheduler.js"></script>
+  <script src="js/renderer.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+
+  <!-- ── Easter egg: Pitoca animada ──────────────────────── -->
+  <script>
+  (function () {
+    'use strict';
+
+    const MESSAGES = [
+      '😻 Curada! Miau~',
+      '💜 Obrigada, mamãe!',
+      '🌟 Pitoca agradece!',
+      '🐾 Ronrom ronrom…',
+      '✨ Que amor!',
+    ];
+
+    const PARTICLES = ['✨','💜','🌟','💫','🐾','💊','🩺'];
+
+    // Sides the cat can appear from
+    const SIDES = ['left', 'right'];
+
+    const widget = document.getElementById('cat-widget');
+    let _visibleTimer = null;
+    let _floatTimer   = null;
+    let _healed       = false;
+
+    function randomBetween(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    /** Positions the widget on a random side */
+    function placeCat() {
+      const side = SIDES[Math.floor(Math.random() * SIDES.length)];
+      const edgePercent = Math.floor(randomBetween(8, 42)); // % from edge
+      widget.style.left  = '';
+      widget.style.right = '';
+      widget.style[side] = edgePercent + '%';
+    }
+
+    /** Shows the cat */
+    function showCat() {
+      if (_healed) return;
+      placeCat();
+      widget.classList.remove('cat-leaving', 'cat-floating');
+      widget.classList.add('cat-visible');
+
+      // Add float after entry animation (~530ms)
+      _floatTimer = setTimeout(() => {
+        widget.classList.add('cat-floating');
+      }, 560);
+
+      // Auto-hide after 8–14 seconds if not clicked
+      _visibleTimer = setTimeout(hideCat, randomBetween(8000, 14000));
+    }
+
+    /** Hides the cat (auto-dismiss) */
+    function hideCat() {
+      clearTimeout(_floatTimer);
+      clearTimeout(_visibleTimer);
+      widget.classList.remove('cat-floating');
+      widget.classList.add('cat-leaving');
+      widget.classList.remove('cat-visible');
+
+      // Schedule next appearance: 20–45 seconds later
+      setTimeout(showCat, randomBetween(20000, 45000));
+    }
+
+    /** Spawns emoji particles */
+    function spawnParticles() {
+      const count = 8;
+      for (let i = 0; i < count; i++) {
+        const p = document.createElement('span');
+        p.className = 'cat-particle';
+        p.textContent = PARTICLES[Math.floor(Math.random() * PARTICLES.length)];
+        p.style.fontSize = randomBetween(0.9, 1.6) + 'rem';
+        const angle   = (360 / count) * i + randomBetween(-18, 18);
+        const dist    = randomBetween(45, 90);
+        const rad     = (angle * Math.PI) / 180;
+        p.style.setProperty('--dx', Math.cos(rad) * dist + 'px');
+        p.style.setProperty('--dy', Math.sin(rad) * dist + 'px');
+        p.style.animationDelay = randomBetween(0, 0.12) + 's';
+        widget.appendChild(p);
+        p.addEventListener('animationend', () => p.remove(), { once: true });
+      }
+    }
+
+    /** Shows speech bubble */
+    function showSpeech() {
+      const bubble = document.createElement('span');
+      bubble.className = 'cat-speech';
+      bubble.textContent = MESSAGES[Math.floor(Math.random() * MESSAGES.length)];
+      widget.appendChild(bubble);
+      // Remove after animation
+      setTimeout(() => bubble.remove(), 6000);
+    }
+
+    /** Called when user clicks/taps the cat */
+    function healCat() {
+      if (_healed) return;
+      _healed = true;
+      clearTimeout(_visibleTimer);
+      clearTimeout(_floatTimer);
+
+      widget.classList.remove('cat-floating', 'cat-leaving');
+      widget.classList.add('cat-healed');
+      spawnParticles();
+      showSpeech();
+
+      // After heal animation ends, fully remove from flow and reset for next time
+      widget.addEventListener('animationend', () => {
+        widget.classList.remove('cat-healed', 'cat-visible');
+        _healed = false;
+        // Reappear again after a longer break (60–120 s)
+        setTimeout(showCat, randomBetween(60000, 120000));
+      }, { once: true });
+    }
+
+    // ── Bind events ──────────────────────────────────────────
+    widget.addEventListener('click', healCat);
+    widget.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); healCat(); }
+    });
+
+    // ── First appearance: 10–20 seconds after load ───────────
+    setTimeout(showCat, randomBetween(10000, 20000));
+  }());
+  </script>
+
+</body>
+</html>

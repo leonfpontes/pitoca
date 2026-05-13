@@ -1,0 +1,152 @@
+/* cards.css — Medication overview cards */
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-3);
+}
+
+@media (max-width: 460px) {
+  .cards-grid { grid-template-columns: 1fr; }
+}
+
+/* ── Individual card ─────────────────────────────────────── */
+.med-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  position: relative;
+  overflow: hidden;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+/* colour strip on top */
+.med-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--med-color, var(--color-primary));
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.med-card:hover {
+  border-color: var(--color-border-2);
+  box-shadow: var(--shadow-sm);
+}
+
+.med-card.completed {
+  opacity: 0.45;
+}
+
+/* ── Card header ─────────────────────────────────────────── */
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-2);
+}
+
+.card-color-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 5px;
+  background: var(--med-color, var(--color-primary));
+}
+
+.card-name {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--color-text);
+  flex: 1;
+  min-width: 0;
+  line-height: 1.3;
+}
+
+/* ── Progress ────────────────────────────────────────────── */
+.card-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 4px;
+  background: var(--color-surface-3);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--med-color, var(--color-primary));
+  border-radius: var(--radius-full);
+  transition: width var(--transition-slow);
+}
+
+.progress-label {
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  line-height: 1.3;
+}
+
+.progress-label .days-remaining {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+/* ── Interval info ───────────────────────────────────────── */
+.card-interval {
+  font-size: 0.74rem;
+  color: var(--color-text-dim);
+}
+
+/* ── Dosage info ─────────────────────────────────────────── */
+.card-dosage {
+  font-size: 0.78rem;
+  color: var(--color-text);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 4px 8px;
+  margin-top: var(--sp-1);
+}
+
+.card-dosage-label {
+  font-weight: 700;
+  color: var(--color-text-dim);
+  margin-right: 4px;
+}
+
+/* ── Card observations ───────────────────────────────────── */
+.card-obs {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: var(--sp-2);
+  border-top: 1px solid var(--color-border);
+}
+
+.card-obs-item {
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+/* ── Completed badge ─────────────────────────────────────── */
+.completed-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  background: var(--color-done-bg);
+  color: var(--color-done-text);
+  border: 1px solid var(--color-done-border);
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}

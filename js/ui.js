@@ -36,7 +36,7 @@ function openModal(medId) {
   // Pre-fill with existing override or the med's defined start
   const state = loadState();
   const existing = state.startOverrides[medId] || med.startISO;
-  input.value = existing ? existing.slice(0, 16) : _nowInputValue();
+  input.value = existing ? _toInputValue(existing) : _nowInputValue();
 
   _showModal(input);
 }
@@ -66,7 +66,7 @@ function openGiveDoseModal(doseKey, medId, scheduledISO) {
   // to the scheduled time so the user just needs to confirm.
   const scheduled = new Date(scheduledISO);
   const now = new Date();
-  input.value = (scheduled < now ? scheduled : now).toISOString().slice(0, 16);
+  input.value = _toInputValue(scheduled < now ? scheduled : now);
   // Clamp to now — can't mark future dose
   const maxVal = _nowInputValue();
   input.setAttribute('max', maxVal);
@@ -117,7 +117,21 @@ function _showModal(input) {
 function _nowInputValue() {
   const now = new Date();
   now.setSeconds(0, 0);
-  return now.toISOString().slice(0, 16);
+  return _toInputValue(now);
+}
+
+/** @private — converts Date/ISO to local "YYYY-MM-DDTHH:MM" for datetime-local */
+function _toInputValue(value) {
+  const date = value instanceof Date ? new Date(value.getTime()) : new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hour = String(date.getHours()).padStart(2, '0');
+  const minute = String(date.getMinutes()).padStart(2, '0');
+
+  return `${year}-${month}-${day}T${hour}:${minute}`;
 }
 
 // ── Event binding ─────────────────────────────────────────────────────────────

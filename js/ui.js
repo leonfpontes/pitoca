@@ -122,7 +122,7 @@ function _nowInputValue() {
 
 /** @private — converts Date/ISO to local "YYYY-MM-DDTHH:MM" for datetime-local */
 function _toInputValue(value) {
-  const date = value instanceof Date ? new Date(value.getTime()) : new Date(value);
+  const date = value instanceof Date ? value : new Date(value);
   if (Number.isNaN(date.getTime())) return '';
 
   const year = date.getFullYear();

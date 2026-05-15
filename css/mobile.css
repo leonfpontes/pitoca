@@ -38,10 +38,17 @@ button, a, [role="button"] {
     padding: var(--sp-3) var(--sp-4);
     padding-top: calc(var(--sp-3) + env(safe-area-inset-top));
     gap: var(--sp-3);
+    justify-content: center;
+    text-align: center;
   }
 
   .header-cat-icon {
     font-size: 1.8rem;
+  }
+
+  .header-info {
+    flex: 0 1 auto;
+    text-align: center;
   }
 
   .header-info h1 {
@@ -51,6 +58,7 @@ button, a, [role="button"] {
   .header-datetime {
     font-size: 0.73rem;
     gap: var(--sp-1);
+    justify-content: center;
   }
 
   /* ── Main container ──────────────────────────────────── */
